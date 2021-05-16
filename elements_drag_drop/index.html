@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag 'n' Drop | LAGRIDA</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div>
+        <div class="dropzone">
+            <div class="node" id="record-id-2" draggable="true">Lagrida</div>
+            <div class="node" id="record-id-0" draggable="true">Google</div>
+            <div class="node" id="record-id-1" draggable="true">Yahoo</div>
+            <div class="node" id="record-id-3" draggable="true">Facebook</div>
+            <div class="node" id="record-id-4" draggable="true">Github</div>
+            <div class="node" id="record-id-5" draggable="true">StackOverflow</div>
+        </div>
+        <div class="dropzone"></div>
+        <div class="dropzone"></div>
+    </div>
+    <script>
+        /*
+            LAGRIDA Yassine Drag 'n' Drop
+            lagyassine@gmail.com
+            11/05/2021
+            &copy
+        */
+
+        let draggedIdItem = '';
+
+        document.querySelectorAll('.node').forEach(el => {
+            el.addEventListener('dragstart', event => {
+                event.dataTransfer.setData('id', el.id);
+                draggedIdItem = el.id;
+                el.classList.add('dragged');
+                setTimeout(() => {
+                    el.style.visibility = 'hidden';
+                }, 1);
+                
+            });
+            el.addEventListener('drop', event => {
+                event.preventDefault();
+            });
+            el.addEventListener('dragend', event => {
+                el.classList.remove('dragged');
+                el.style.visibility = 'visible';
+            });
+            el.addEventListener('dragover', event => {
+                event.preventDefault();
+            });
+            el.addEventListener('dragleave', event => {
+            });
+        });
+        document.querySelectorAll('.dropzone').forEach(dropZone => {
+            dropZone.addEventListener('dragover', event => {
+                event.preventDefault();
+                nodes = [...dropZone.querySelectorAll('.node')];
+                const draggedEl = document.querySelector('#' + draggedIdItem);
+                if(nodes.length > 0){
+                    let i = 0;
+                    let IdAbove = 0;
+                    let IdUnder = 0;
+                    let positions = [];
+                    nodes.forEach(el => {
+                        const position = el.offsetTop + el.offsetHeight/4;
+                        positions.push(position);
+                    });
+                    while(i < positions.length){
+                        if(positions[i] <= event.pageY){
+                            IdUnder = i;
+                        }
+                        i++;
+                    }
+                    const dragOverEl = document.querySelector('#' + nodes[IdUnder].id);
+                    const result = nodes.indexOf(dragOverEl)-nodes.indexOf(draggedEl);
+                    if(result > 0){
+                        dropZone.insertBefore(draggedEl, dragOverEl.nextElementSibling);
+                    }
+                    if(result < 0){
+                        dropZone.insertBefore(draggedEl, dragOverEl);
+                    }
+                }else{
+                    dropZone.appendChild(draggedEl);
+                }
+            });
+            dropZone.addEventListener('dragenter', event => {
+                dropZone.classList.add('drag-over');
+            });
+            dropZone.addEventListener('dragleave', event => {
+                dropZone.classList.remove('drag-over');
+            });
+            dropZone.addEventListener('drop', event => {
+                event.preventDefault();
+                const draggedId = '#' + event.dataTransfer.getData('id');
+                const draggedElement = document.querySelector(draggedId);
+                draggedElement.style.visibility = 'visible';
+
+                dropZone.classList.remove('drag-over');
+            });
+        });
+    </script>
+</body>
+</html>

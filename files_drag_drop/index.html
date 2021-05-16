@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag 'n' Drop | LAGRIDA</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <template>
+        <div class="file">
+            <div class="close" onclick="removeFile(this)">X</div>
+            <div style="clear:both"></div>
+            <img src="images/file.png" alt="" />
+            <div class="title"></div>
+            <div class="size"></div>
+        </div>
+    </template>
+    <div class="container">
+        <button id="t">console files</button>
+        <form method="post" enctype="multipart/form-data">
+            <div class="drop-zone">
+                <div>Drop files here</div>
+                <input type="file" id="files" style="display: none" name="files" multiple />
+            </div>
+        </form>
+        <div class="files" id="files-zone">
+        </div>
+    </div>
+    <script src="scripts/script.js"></script>
+    <script>
+        /*
+            LAGRIDA Yassine Drag 'n' Drop
+            lagyassine@gmail.com
+            14/05/2021
+            &copy
+        */
+        const t = document.querySelector('#t');
+        const filesNode = document.querySelector('#files');
+        const dropZone = document.querySelector('.drop-zone');
+        const filesZone = document.querySelector('#files-zone');
+        const templateElm = document.querySelector("template");
+
+        const imagesFolder = 'images/';
+        const extension = 'png';
+
+        let filesList = new DataTransfer();
+
+        t.addEventListener('click', event => {
+            console.log(filesList.files);
+        });
+        const addFile = (file, dataIndex) => {
+            const template = templateElm.content.cloneNode(true);
+            const firstElement = template.children[0].children[0];
+            firstElement.setAttribute('data-index', dataIndex);
+            if(file.type.startsWith('image/')){
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.addEventListener('load', event => {
+                    firstElement.nextElementSibling.nextElementSibling.src = reader.result;
+                });
+            }else{
+                firstElement.nextElementSibling.nextElementSibling.src = imagesFolder + mimeTypes(file.type) + '.' + extension;
+            }
+            firstElement.nextElementSibling.nextElementSibling.nextElementSibling.innerText = bigTitle(removeExtension(file.name));
+            firstElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = getSize(file.size);
+            filesZone.appendChild(template);
+        }
+        filesNode.addEventListener('change', event => {
+            const files = [...event.target.files];
+            const filesListLength = filesList.items.length;
+            files.forEach((file, index) => {
+                addFile(file, (filesListLength+index));
+            });
+            files.forEach(file => filesList.items.add(file));
+        });
+        dropZone.addEventListener('click', event => {
+            filesNode.click();
+        });
+        dropZone.addEventListener('dragover', event => {
+            event.preventDefault();
+        });
+        dropZone.addEventListener('dragenter', event => {
+            event.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', event => {
+            event.preventDefault();
+            dropZone.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', event => {
+            event.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = [...event.dataTransfer.files];
+            const filesListLength = filesList.items.length;
+            files.forEach((file, index) => {
+                addFile(file, (filesListLength+index));
+            });
+            files.forEach(file => filesList.items.add(file));
+        });
+        const removeFile = node => {
+
+            const dataIndex = node.getAttribute('data-index');
+
+            // remove from the DOM
+            node.parentNode.remove();
+
+            // remove from DataTransfer
+            filesList.items.remove(dataIndex);
+
+            document.querySelectorAll('#files-zone > .file').forEach((el, index) => {
+                el.children[0].setAttribute('data-index', index);
+            });
+        }
+    </script>
+</body>
+</html>

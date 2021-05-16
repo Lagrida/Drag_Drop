@@ -1,0 +1,58 @@
+.container{
+    max-width: 800px;
+    margin: 60px auto;
+}
+.drop-zone{
+    border: 4px dashed green;
+    border-radius: 10px;
+    margin: 10px 0px;
+    padding: 40px;
+    text-align: center;
+    font-weight: 500;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+    color: #C3C3C3;
+    cursor: pointer;
+}
+.files{
+    margin: 10px 0px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.file{
+    width: 125px;
+    padding: 5px;
+    text-align: center;
+    margin: 10px;
+}
+.file .title{
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.file .size{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #808080
+}
+.file:hover{
+    background-color: #F3F3F3;
+    border-bottom: 4px solid #C3C3c3
+}
+.file img{
+    max-width: 125px;
+}
+.drag-over{
+    opacity: 0.5;
+}
+.close{
+    float:right;
+    font-family: tahoma;
+    color: #CC0000;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 3px 6px
+}
+.close:hover{
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 5px;
+}
